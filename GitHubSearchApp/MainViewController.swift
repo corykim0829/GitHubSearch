@@ -73,6 +73,17 @@ final class MainViewController: UIViewController, View {
 			}
 			.bind(to: reactor.action)
 			.disposed(by: disposeBag)
+		
+		tableView.rx.contentOffset
+			.filter { [weak self] offset in
+				guard let `self` = self else { return false }
+				guard self.tableView.frame.height > 0 else { return false }
+				return offset.y + self.tableView.frame.height >= self.tableView.contentSize.height - 100
+			}
+			.map { _ in Reactor.Action.fetchNextPage }
+			.bind(to: reactor.action)
+			.disposed(by: disposeBag)
+		
 	}
 	
 	private func bindState(_ reactor: MainReactor) {
