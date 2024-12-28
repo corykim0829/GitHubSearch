@@ -69,22 +69,18 @@ final class MainReactor: Reactor {
 		switch mutation {
 		case .setCurrentKeyword(let keyword):
 			newState.currentKeyword = keyword
-			return newState
 		case .setRepos(let repos, nextPage: let nextPage):
 			newState.repos = repos
 			newState.nextPage = nextPage
-			return newState
 		case .setIsSearching(let isSearching):
 			newState.isSearching = isSearching
-			return newState
 		case .setFetchingNextPage(let isFetchingNextPage):
 			newState.isFetchingNextPage = isFetchingNextPage
-			return newState
 		case .appendNextPageRepos(let repos, nextPage: let nextPage):
 			newState.repos.append(contentsOf: repos)
 			newState.nextPage = nextPage
-			return newState
 		}
+		return newState
 	}
 	
 }
