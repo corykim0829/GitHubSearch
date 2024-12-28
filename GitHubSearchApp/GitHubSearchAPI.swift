@@ -16,7 +16,7 @@ protocol GitHubSearchAPI {
 final class GitHubSearchAPIImpl: GitHubSearchAPI {
 	
 	func makeURL(for query: String?, page: Int) -> URL? {
-		guard let query = query else { return nil }
+		guard let query else { return nil }
 		return URL(string: "https://api.github.com/search/repositories?q=\(query)&page=\(page)")
 	}
 	
