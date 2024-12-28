@@ -19,7 +19,7 @@ final class MainReactor: Reactor {
 	enum Mutation {
 		case setRepos([String], nextPage: Int?)
 		case setCurrentKeyword(String?)
-		case setSearchingState(Bool)
+		case setIsSearching(Bool)
 		case setFetchingNextPage(Bool)
 		case appendNextPageRepos([String], nextPage: Int?)
 	}
@@ -44,12 +44,12 @@ final class MainReactor: Reactor {
 		switch action {
 		case .search(let keyword):
 			return Observable.concat([
-				Observable.just(Mutation.setSearchingState(true)),
+				Observable.just(Mutation.setIsSearching(true)),
 				Observable.just(Mutation.setCurrentKeyword(keyword)),
 				searchAPI.search(query: keyword, page: 1)
 					.take(until: self.action.filter(Action.isUpdateQueryAction))
 					.map { Mutation.setRepos($0, nextPage: $1) },
-				Observable.just(Mutation.setSearchingState(false))
+				Observable.just(Mutation.setIsSearching(false))
 			])
 		case .fetchNextPage:
 			guard !currentState.isFetchingNextPage else { return Observable.empty() }
@@ -74,7 +74,7 @@ final class MainReactor: Reactor {
 			newState.repos = repos
 			newState.nextPage = nextPage
 			return newState
-		case .setSearchingState(let isSearching):
+		case .setIsSearching(let isSearching):
 			newState.isSearching = isSearching
 			return newState
 		case .setFetchingNextPage(let isFetchingNextPage):
