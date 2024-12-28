@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 
 protocol GitHubSearchAPI {
-	func search(query: String?, page: Int) -> Observable<(repos: [String], nextPage: Int?)>
+	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)>
 }
 
 final class GitHubSearchAPIImpl: GitHubSearchAPI {
@@ -20,7 +20,7 @@ final class GitHubSearchAPIImpl: GitHubSearchAPI {
 		return URL(string: "https://api.github.com/search/repositories?q=\(query)&page=\(page)")
 	}
 	
-	func search(query: String?, page: Int) -> Observable<(repos: [String], nextPage: Int?)> {
+	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)> {
 		let emptyResult: ([String], Int?) = ([], nil)
 		guard let url = url(forQuery: query, page: page), query != "" else {
 			return .just(emptyResult)
