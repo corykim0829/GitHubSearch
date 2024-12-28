@@ -15,14 +15,14 @@ protocol GitHubSearchAPI {
 
 final class GitHubSearchAPIImpl: GitHubSearchAPI {
 	
-	func url(forQuery query: String?, page: Int) -> URL? {
+	func makeURL(for query: String?, page: Int) -> URL? {
 		guard let query = query else { return nil }
 		return URL(string: "https://api.github.com/search/repositories?q=\(query)&page=\(page)")
 	}
 	
 	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)> {
 		let emptyResult: ([String], Int?) = ([], nil)
-		guard let url = url(forQuery: query, page: page), query != "" else {
+		guard let url = makeURL(for: query, page: page), query != "" else {
 			return .just(emptyResult)
 		}
 		
