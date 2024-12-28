@@ -34,7 +34,7 @@ final class MainReactor: Reactor {
 	
 	var initialState: State = State()
 	
-	let searchAPI: GitHubSearchAPI
+	private let searchAPI: GitHubSearchAPI
 	
 	init(searchAPI: GitHubSearchAPI) {
 		self.searchAPI = searchAPI
