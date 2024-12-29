@@ -109,7 +109,7 @@ final class MainViewController: UIViewController, View {
 			.disposed(by: disposeBag)
 		
 		reactor.state
-			.map { $0.error }
+			.compactMap { $0.error }
 			.observe(on: MainScheduler.instance)
 			.subscribe(onNext: { error in
 				self.alert(error: error)
