@@ -35,13 +35,6 @@ final class GitHubSearchAPIImpl: GitHubSearchAPI {
 				let nextPage = repos.isEmpty ? nil : page + 1
 				return (repos, nextPage)
 			}
-			.do(onError: { error in
-				if case let .some(.httpRequestFailed(response, _)) = error as? RxCocoaURLError, response.statusCode == 403 {
-					print("⚠️ GitHub API rate limit exceeded. Wait for 60 seconds and try again.")
-				}
-				
-			})
-			.catchAndReturn(emptyResult)
 		
 	}
 }

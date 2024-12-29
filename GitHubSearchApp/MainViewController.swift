@@ -108,6 +108,31 @@ final class MainViewController: UIViewController, View {
 			.bind(to: loadingView.rx.isHidden)
 			.disposed(by: disposeBag)
 		
+		reactor.state
+			.map { $0.error }
+			.observe(on: MainScheduler.instance)
+			.subscribe(onNext: { error in
+				self.alert(error: error)
+				
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+					reactor.action.onNext(.clearError)
+				}
+			})
+			.disposed(by: disposeBag)
+		
+	}
+	
+	// MARK: - private method
+	
+	private func alert(error: Error?) {
+		guard let error = error else { return }
+		let alertController = UIAlertController(
+			title: "에러",
+			message: error.localizedDescription,
+			preferredStyle: .alert)
+		let doneAction = UIAlertAction(title: "확인", style: .default)
+		alertController.addAction(doneAction)
+		present(alertController, animated: true)
 	}
 	
 	// MARK: - Configuration
