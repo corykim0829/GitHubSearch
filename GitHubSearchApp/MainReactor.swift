@@ -33,7 +33,7 @@ final class MainReactor: Reactor {
 		var isFetchingNextPage: Bool = false
 		var repos: [String] = []
 		var nextPage: Int?
-		var error: Error?
+		@Pulse var error: Error?
 	}
 	
 	var initialState: State = State()

@@ -108,15 +108,12 @@ final class MainViewController: UIViewController, View {
 			.bind(to: loadingView.rx.isHidden)
 			.disposed(by: disposeBag)
 		
-		reactor.state
-			.compactMap { $0.error }
+		reactor
+			.pulse(\.$error)
+			.compactMap { $0 }
 			.observe(on: MainScheduler.instance)
 			.subscribe(onNext: { error in
 				self.alert(error: error)
-				
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-					reactor.action.onNext(.clearError)
-				}
 			})
 			.disposed(by: disposeBag)
 		
