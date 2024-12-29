@@ -89,14 +89,14 @@ final class MainViewController: UIViewController, View {
 	
 	private func bindState(_ reactor: MainReactor) {
 		reactor.state
-			.map { $0.repos }
+			.map { $0.repositoryNames }
 			.distinctUntilChanged()
 			.observe(on: MainScheduler.instance)
-			.subscribe(onNext: { repos in
+			.subscribe(onNext: { repositoryNames in
 				guard self.tableViewDataSource != nil else { return }
 				var snapshot = NSDiffableDataSourceSnapshot<Section, String>()
 				snapshot.appendSections([.main])
-				snapshot.appendItems(repos)
+				snapshot.appendItems(repositoryNames)
 				self.tableViewDataSource?.apply(snapshot, animatingDifferences: true)
 			})
 			.disposed(by: disposeBag)

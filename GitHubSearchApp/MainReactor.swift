@@ -18,7 +18,7 @@ final class MainReactor: Reactor {
 	}
 	
 	enum Mutation {
-		case setRepos([String], nextPage: Int?)
+		case setRepositoryNames([String], nextPage: Int?)
 		case setCurrentKeyword(String?)
 		case setIsSearching(Bool)
 		case setFetchingNextPage(Bool)
@@ -31,7 +31,7 @@ final class MainReactor: Reactor {
 		var isSearching: Bool = false
 		var currentKeyword: String?
 		var isFetchingNextPage: Bool = false
-		var repos: [String] = []
+		var repositoryNames: [String] = []
 		var nextPage: Int?
 		@Pulse var error: Error?
 	}
@@ -68,7 +68,7 @@ final class MainReactor: Reactor {
 	private func search(query: String?, page: Int) -> Observable<Mutation> {
 		searchAPI.search(query: query, page: 1)
 			.take(until: self.action.filter(Action.isUpdateQueryAction))
-			.map { Mutation.setRepos($0, nextPage: $1) }
+			.map { Mutation.setRepositoryNames($0, nextPage: $1) }
 			.catch { error in
 				return .just(Mutation.setError(error))
 			}
@@ -89,15 +89,15 @@ final class MainReactor: Reactor {
 		switch mutation {
 		case .setCurrentKeyword(let keyword):
 			newState.currentKeyword = keyword
-		case .setRepos(let repos, nextPage: let nextPage):
-			newState.repos = repos
+		case .setRepositoryNames(let repositoryNames, nextPage: let nextPage):
+			newState.repositoryNames = repositoryNames
 			newState.nextPage = nextPage
 		case .setIsSearching(let isSearching):
 			newState.isSearching = isSearching
 		case .setFetchingNextPage(let isFetchingNextPage):
 			newState.isFetchingNextPage = isFetchingNextPage
 		case .appendNextPageRepos(let repos, nextPage: let nextPage):
-			newState.repos.append(contentsOf: repos)
+			newState.repositoryNames.append(contentsOf: repos)
 			newState.nextPage = nextPage
 		case .setError(let error):
 			newState.error = error
