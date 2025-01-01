@@ -14,7 +14,6 @@ final class MainReactor: Reactor {
 	enum Action {
 		case search(String?)
 		case fetchNextPage
-		case clearError
 	}
 	
 	enum Mutation {
@@ -24,7 +23,6 @@ final class MainReactor: Reactor {
 		case setFetchingNextPage(Bool)
 		case appendNextPageRepos([String], nextPage: Int?)
 		case setError(Error?)
-		case clearError
 	}
 	
 	struct State {
@@ -60,8 +58,6 @@ final class MainReactor: Reactor {
 				fetchNextPageRepositories(),
 				Observable.just(Mutation.setFetchingNextPage(false))
 			])
-		case .clearError:
-			return Observable.just(Mutation.clearError)
 		}
 	}
 	
@@ -101,8 +97,6 @@ final class MainReactor: Reactor {
 			newState.nextPage = nextPage
 		case .setError(let error):
 			newState.error = error
-		case .clearError:
-			newState.error = nil
 		}
 		return newState
 	}
