@@ -6,23 +6,24 @@
 //
 
 import Foundation
+
 import RxCocoa
 import RxSwift
 
 protocol GitHubSearchAPI {
-	func search(query: String?, page: Int) -> Observable<(repos: [String], nextPage: Int?)>
+	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)>
 }
 
 final class GitHubSearchAPIImpl: GitHubSearchAPI {
 	
-	func url(forQuery query: String?, page: Int) -> URL? {
-		guard let query = query else { return nil }
+	func makeURL(for query: String?, page: Int) -> URL? {
+		guard let query else { return nil }
 		return URL(string: "https://api.github.com/search/repositories?q=\(query)&page=\(page)")
 	}
 	
-	func search(query: String?, page: Int) -> Observable<(repos: [String], nextPage: Int?)> {
+	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)> {
 		let emptyResult: ([String], Int?) = ([], nil)
-		guard let url = url(forQuery: query, page: page), query != "" else {
+		guard let url = makeURL(for: query, page: page), query != "" else {
 			return .just(emptyResult)
 		}
 		
@@ -34,13 +35,6 @@ final class GitHubSearchAPIImpl: GitHubSearchAPI {
 				let nextPage = repos.isEmpty ? nil : page + 1
 				return (repos, nextPage)
 			}
-			.do(onError: { error in
-				if case let .some(.httpRequestFailed(response, _)) = error as? RxCocoaURLError, response.statusCode == 403 {
-					print("⚠️ GitHub API rate limit exceeded. Wait for 60 seconds and try again.")
-				}
-				
-			})
-			.catchAndReturn(emptyResult)
 		
 	}
 }

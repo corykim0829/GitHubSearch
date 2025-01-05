@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import ReactorKit
 import RxCocoa
 import RxSwift
@@ -88,14 +89,14 @@ final class MainViewController: UIViewController, View {
 	
 	private func bindState(_ reactor: MainReactor) {
 		reactor.state
-			.map { $0.repos }
+			.map { $0.repositoryNames }
 			.distinctUntilChanged()
 			.observe(on: MainScheduler.instance)
-			.subscribe(onNext: { repos in
+			.subscribe(onNext: { repositoryNames in
 				guard self.tableViewDataSource != nil else { return }
 				var snapshot = NSDiffableDataSourceSnapshot<Section, String>()
 				snapshot.appendSections([.main])
-				snapshot.appendItems(repos)
+				snapshot.appendItems(repositoryNames)
 				self.tableViewDataSource?.apply(snapshot, animatingDifferences: true)
 			})
 			.disposed(by: disposeBag)
@@ -107,6 +108,28 @@ final class MainViewController: UIViewController, View {
 			.bind(to: loadingView.rx.isHidden)
 			.disposed(by: disposeBag)
 		
+		reactor
+			.pulse(\.$error)
+			.compactMap { $0 }
+			.observe(on: MainScheduler.instance)
+			.subscribe(onNext: { error in
+				self.alert(error: error)
+			})
+			.disposed(by: disposeBag)
+		
+	}
+	
+	// MARK: - private method
+	
+	private func alert(error: Error?) {
+		guard let error = error else { return }
+		let alertController = UIAlertController(
+			title: "에러",
+			message: error.localizedDescription,
+			preferredStyle: .alert)
+		let doneAction = UIAlertAction(title: "확인", style: .default)
+		alertController.addAction(doneAction)
+		present(alertController, animated: true)
 	}
 	
 	// MARK: - Configuration
