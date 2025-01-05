@@ -66,7 +66,10 @@ final class MainReactor: Reactor {
 			.take(until: self.action.filter(Action.isUpdateQueryAction))
 			.map { Mutation.setRepositoryNames($0, nextPage: $1) }
 			.catch { error in
-				return .just(Mutation.setError(error))
+				return Observable.concat([
+					.just(Mutation.setRepositoryNames([], nextPage: nil)),
+					.just(Mutation.setError(error))
+				])
 			}
 	}
 	
