@@ -14,7 +14,7 @@ final class MainReactorTests: XCTestCase {
 	
 	func testSearchAction() throws {
 		// Given
-		let mockAPI = MockGitHubSearchAPI()
+		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI) // Mock API 에서 검색 결과 2개 반환하고 있음
 		
 		// When
@@ -27,7 +27,7 @@ final class MainReactorTests: XCTestCase {
 	
 	func testfetchingNextPage() throws {
 		// Given
-		let mockAPI = MockGitHubSearchAPI()
+		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI) // Mock API 에서 검색 결과 2개 반환하고 있음
 		
 		// When
