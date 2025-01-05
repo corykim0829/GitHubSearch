@@ -11,8 +11,12 @@ import RxSwift
 
 
 final class GitHubSearchAPIMock: GitHubSearchAPI {
+	
+	var searchResultStub: Observable<(repositoryNames: [String], nextPage: Int?)> = .empty()
+	
 	func search(query: String?, page: Int) -> Observable<(repositoryNames: [String], nextPage: Int?)> {
-		Observable.just((["dummy1", "dummy2"], 2))
+		
+		return searchResultStub
 	}
 	
 }
