@@ -19,6 +19,8 @@ final class RepositoryWebViewController: UIViewController, View {
 	
 	private let webView = WKWebView()
 	
+	private let indicatorView = UIActivityIndicatorView()
+	
 	var disposeBag = DisposeBag()
 	
 	let repositoryName: String
@@ -50,6 +52,24 @@ final class RepositoryWebViewController: UIViewController, View {
 				self?.webView.load(urlRequest)
 			})
 			.disposed(by: disposeBag)
+		
+		webView.rx.didStartLoad
+			.subscribe { [weak self] _ in
+				self?.indicatorView.startAnimating()
+			}
+			.disposed(by: disposeBag)
+		
+		webView.rx.didFinishLoad
+			.subscribe { [weak self] _ in
+				self?.indicatorView.stopAnimating()
+			}
+			.disposed(by: disposeBag)
+		
+		webView.rx.didFailLoad
+			.subscribe { [weak self] _ in
+				self?.indicatorView.stopAnimating()
+			}
+			.disposed(by: disposeBag)
 	}
 	
 	private func configureUI() {
@@ -59,12 +79,41 @@ final class RepositoryWebViewController: UIViewController, View {
 	
 	private func configureSubviews() {
 		view.addSubview(webView)
+		view.addSubview(indicatorView)
 	}
 	
 	private func configureConstraints() {
 		webView.snp.makeConstraints { make in
 			make.edges.equalToSuperview()
 		}
+		indicatorView.snp.makeConstraints { make in
+			make.center.equalToSuperview()
+		}
 	}
 	
+}
+
+extension Reactive where Base: WKWebView {
+	var navigationDelegate: DelegateProxy<WKWebView, WKNavigationDelegate> {
+		RxWKNavigationDelegateProxy.proxy(for: base)
+	}
+	
+	var didStartLoad: Observable<Void> {
+		navigationDelegate
+			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didStartProvisionalNavigation:)))
+			.map { _ in }
+	}
+	
+	var didFinishLoad: Observable<Void> {
+		navigationDelegate
+			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didFinish:)))
+			.map { _ in }
+	}
+	
+	var didFailLoad: Observable<Error> {
+		navigationDelegate
+			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didFailProvisionalNavigation:withError:)))
+			.map { $0[2] as? Error }
+			.compactMap { $0 }
+	}
 }
