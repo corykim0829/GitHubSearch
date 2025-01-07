@@ -181,6 +181,7 @@ final class MainViewController: UIViewController, View {
 			cellProvider: { tableView, indexPath, item in
 				let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultRepoCell.reuseIdentifier, for: indexPath) as! SearchResultRepoCell
 				cell.update(title: item)
+				cell.selectionStyle = .none
 				return cell
 			})
 	}
