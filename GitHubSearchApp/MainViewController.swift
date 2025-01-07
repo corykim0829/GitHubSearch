@@ -85,6 +85,14 @@ final class MainViewController: UIViewController, View {
 			.bind(to: reactor.action)
 			.disposed(by: disposeBag)
 		
+		tableView.rx.itemSelected
+			.subscribe(onNext: { [weak self] indexPath in
+				let repositoryName = reactor.currentState.repositoryNames[indexPath.row]
+				let webViewController = RepositoryWebViewController(repositoryName: repositoryName)
+				webViewController.reactor = RepositoryWebViewReactor()
+				self?.navigationController?.pushViewController(webViewController, animated: true)
+			})
+			.disposed(by: disposeBag)
 	}
 	
 	private func bindState(_ reactor: MainReactor) {
