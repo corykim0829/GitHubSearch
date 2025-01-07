@@ -12,7 +12,7 @@ import ReactorKit
 final class RepositoryWebViewReactor: Reactor {
 	
 	enum Action {
-		case setURL(repositoryName: String)
+		case loadView(repositoryName: String)
 	}
 	
 	enum Mutation {
@@ -27,7 +27,7 @@ final class RepositoryWebViewReactor: Reactor {
 	
 	func mutate(action: Action) -> Observable<Mutation> {
 		switch action {
-		case .setURL(repositoryName: let repositoryName):
+		case .loadView(repositoryName: let repositoryName):
 			return .just(Mutation.setURL(repositoryName: repositoryName))
 		}
 	}

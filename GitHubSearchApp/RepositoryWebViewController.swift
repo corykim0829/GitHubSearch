@@ -37,7 +37,7 @@ final class RepositoryWebViewController: UIViewController, View {
 		
 		configureUI()
 		
-		reactor?.action.onNext(.setURL(repositoryName: repositoryName))
+		reactor?.action.onNext(.loadView(repositoryName: repositoryName))
 	}
 	
 	func bind(reactor: RepositoryWebViewReactor) {
