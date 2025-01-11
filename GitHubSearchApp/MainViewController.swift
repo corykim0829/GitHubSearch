@@ -87,7 +87,9 @@ final class MainViewController: UIViewController, View {
 		
 		tableView.rx.itemSelected
 			.subscribe(onNext: { [weak self] indexPath in
-				let repositoryName = reactor.currentState.repositoryNames[indexPath.row]
+				guard let repositoryName = reactor.currentState.repositoryNames[safe: indexPath.row] else {
+					return
+				}
 				let webViewController = RepositoryWebViewController(repositoryName: repositoryName)
 				webViewController.reactor = RepositoryWebViewReactor()
 				self?.navigationController?.pushViewController(webViewController, animated: true)
