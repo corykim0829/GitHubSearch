@@ -20,7 +20,8 @@ final class MainReactorTests: XCTestCase {
 		// Given
 		let apiMock = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: apiMock)
-		apiMock.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		apiMock.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		
 		// When
 		sut.action.onNext(.search("TEST"))
@@ -49,9 +50,11 @@ final class MainReactorTests: XCTestCase {
 		// Given
 		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		sut.action.onNext(.search("TEST"))
-		mockAPI.searchResultStub = .just((["TEST3"], nil)) // 다음 search 요청에서는 검색 결과 1개 더 추가한다
+		// 다음 search 요청에서는 검색 결과를 1개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST3"], nil))
 		
 		// When
 		sut.action.onNext(.fetchNextPage)
@@ -66,7 +69,8 @@ final class MainReactorTests: XCTestCase {
 		// Given
 		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		sut.action.onNext(.search("TEST"))
 		mockAPI.searchResultStub = .error(GitHubSearchAPIMockError.responseStatus403Error)
 		
