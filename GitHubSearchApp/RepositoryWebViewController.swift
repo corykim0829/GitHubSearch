@@ -38,6 +38,7 @@ final class RepositoryWebViewController: UIViewController, View {
 		super.viewDidLoad()
 		
 		configureUI()
+		configureWebViewDelegate()
 		
 		reactor?.action.onNext(.loadView(repositoryName: repositoryName))
 	}
@@ -53,22 +54,10 @@ final class RepositoryWebViewController: UIViewController, View {
 			})
 			.disposed(by: disposeBag)
 		
-		webView.rx.didStartLoad
-			.subscribe { [weak self] _ in
-				self?.indicatorView.startAnimating()
-			}
-			.disposed(by: disposeBag)
-		
-		webView.rx.didFinishLoad
-			.subscribe { [weak self] _ in
-				self?.indicatorView.stopAnimating()
-			}
-			.disposed(by: disposeBag)
-		
-		webView.rx.didFailLoad
-			.subscribe { [weak self] _ in
-				self?.indicatorView.stopAnimating()
-			}
+		reactor.state
+			.map { $0.isLoading }
+			.distinctUntilChanged()
+			.bind(to: indicatorView.rx.isAnimating)
 			.disposed(by: disposeBag)
 	}
 	
@@ -91,29 +80,22 @@ final class RepositoryWebViewController: UIViewController, View {
 		}
 	}
 	
+	private func configureWebViewDelegate() {
+		webView.navigationDelegate = self
+	}
+	
 }
 
-extension Reactive where Base: WKWebView {
-	var navigationDelegate: DelegateProxy<WKWebView, WKNavigationDelegate> {
-		RxWKNavigationDelegateProxy.proxy(for: base)
+extension RepositoryWebViewController: WKNavigationDelegate {
+	func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+		reactor?.action.onNext(.webLoadStart)
 	}
 	
-	var didStartLoad: Observable<Void> {
-		navigationDelegate
-			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didStartProvisionalNavigation:)))
-			.map { _ in }
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		reactor?.action.onNext(.webLoadFinish)
 	}
 	
-	var didFinishLoad: Observable<Void> {
-		navigationDelegate
-			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didFinish:)))
-			.map { _ in }
-	}
-	
-	var didFailLoad: Observable<Error> {
-		navigationDelegate
-			.methodInvoked(#selector(WKNavigationDelegate.webView(_:didFailProvisionalNavigation:withError:)))
-			.map { $0[2] as? Error }
-			.compactMap { $0 }
+	func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
+		reactor?.action.onNext(.webLoadFinish)
 	}
 }
