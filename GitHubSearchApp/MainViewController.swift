@@ -100,12 +100,12 @@ final class MainViewController: UIViewController, View {
 			.map { $0.repositoryNames }
 			.distinctUntilChanged()
 			.observe(on: MainScheduler.instance)
-			.subscribe(onNext: { repositoryNames in
-				guard self.tableViewDataSource != nil else { return }
+			.subscribe(onNext: { [weak self] repositoryNames in
+				guard self?.tableViewDataSource != nil else { return }
 				var snapshot = NSDiffableDataSourceSnapshot<Section, String>()
 				snapshot.appendSections([.main])
 				snapshot.appendItems(repositoryNames)
-				self.tableViewDataSource?.apply(snapshot, animatingDifferences: true)
+				self?.tableViewDataSource?.apply(snapshot, animatingDifferences: true)
 			})
 			.disposed(by: disposeBag)
 		
@@ -120,8 +120,8 @@ final class MainViewController: UIViewController, View {
 			.pulse(\.$error)
 			.compactMap { $0 }
 			.observe(on: MainScheduler.instance)
-			.subscribe(onNext: { error in
-				self.alert(error: error)
+			.subscribe(onNext: { [weak self] error in
+				self?.alert(error: error)
 			})
 			.disposed(by: disposeBag)
 		
