@@ -18,9 +18,9 @@ final class MainReactorTests: XCTestCase {
 	
 	func test_search_action이_들어올_때_검색이_성공한_경우_현재키워드와_레포지토리이름을_업데이트합니다() throws {
 		// Given
-		let mockAPI = GitHubSearchAPIMock()
-		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		let apiMock = GitHubSearchAPIMock()
+		let sut = MainReactor(searchAPI: apiMock)
+		apiMock.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
 		
 		// When
 		sut.action.onNext(.search("TEST"))
