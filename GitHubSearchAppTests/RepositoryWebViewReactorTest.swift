@@ -25,4 +25,26 @@ final class RepositoryWebViewReactorTest: XCTestCase {
 		XCTAssertEqual(sut.currentState.currentURL?.absoluteString, "https://github.com/" + dummyRepositoryName)
 	}
 	
+	func test_webLoadStart_action이_실행되면_isLoading은_true가_된다() throws {
+		// Given
+		let sut = RepositoryWebViewReactor()
+		
+		// When
+		sut.action.onNext(.webLoadStart)
+		
+		// Then
+		XCTAssertEqual(sut.currentState.isLoading, true)
+	}
+	
+	func test_webLoadFinish_action이_실행되면_isLoading은_false가_된다() throws {
+		// Given
+		let sut = RepositoryWebViewReactor()
+		
+		// When
+		sut.action.onNext(.webLoadFinish)
+		
+		// Then
+		XCTAssertEqual(sut.currentState.isLoading, false)
+	}
+	
 }
