@@ -23,7 +23,7 @@ final class RepositoryWebViewController: UIViewController, View {
 	
 	var disposeBag = DisposeBag()
 	
-	let repositoryName: String
+	private let repositoryName: String
 	
 	init(repositoryName: String) {
 		self.repositoryName = repositoryName
