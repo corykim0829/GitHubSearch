@@ -20,6 +20,7 @@ final class RepositoryWebViewReactor: Reactor {
 	}
 	
 	struct State {
+		let hostURL = "https://github.com/"
 		var currentURL: URL?
 	}
 	
@@ -36,8 +37,7 @@ final class RepositoryWebViewReactor: Reactor {
 		var state = state
 		switch mutation {
 		case .setURL(repositoryName: let repositoryName):
-			let hostURL = "https://github.com/"
-			state.currentURL = URL(string: hostURL + repositoryName)
+			state.currentURL = URL(string: currentState.hostURL + repositoryName)
 		}
 		return state
 	}
