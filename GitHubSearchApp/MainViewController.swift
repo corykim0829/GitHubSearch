@@ -103,11 +103,11 @@ final class MainViewController: UIViewController, View {
 			.distinctUntilChanged()
 			.observe(on: MainScheduler.instance)
 			.subscribe(onNext: { [weak self] repositoryNames in
-				guard self?.tableViewDataSource != nil else { return }
+				guard let self, tableViewDataSource != nil else { return }
 				var snapshot = NSDiffableDataSourceSnapshot<Section, String>()
 				snapshot.appendSections([.main])
 				snapshot.appendItems(repositoryNames)
-				self?.tableViewDataSource?.apply(snapshot, animatingDifferences: true)
+				tableViewDataSource?.apply(snapshot, animatingDifferences: true)
 			})
 			.disposed(by: disposeBag)
 		
