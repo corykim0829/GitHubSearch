@@ -18,9 +18,10 @@ final class MainReactorTests: XCTestCase {
 	
 	func test_search_action이_들어올_때_검색이_성공한_경우_현재키워드와_레포지토리이름을_업데이트합니다() throws {
 		// Given
-		let mockAPI = GitHubSearchAPIMock()
-		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		let apiMock = GitHubSearchAPIMock()
+		let sut = MainReactor(searchAPI: apiMock)
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		apiMock.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		
 		// When
 		sut.action.onNext(.search("TEST"))
@@ -45,13 +46,15 @@ final class MainReactorTests: XCTestCase {
 		XCTAssertNotNil(sut.currentState.error)
 	}
 	
-	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_성공한_경우_현재키워드를_업데이트하고_레포지토리_이름을_기존레포지토리이름에_추가합니다() throws {
+	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_성공한_경우_레포지토리_이름을_기존레포지토리이름에_추가합니다() throws {
 		// Given
 		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		sut.action.onNext(.search("TEST"))
-		mockAPI.searchResultStub = .just((["TEST3"], nil)) // 다음 search 요청에서는 검색 결과 1개 더 추가한다
+		// 다음 search 요청에서는 검색 결과를 1개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST3"], nil))
 		
 		// When
 		sut.action.onNext(.fetchNextPage)
@@ -62,11 +65,12 @@ final class MainReactorTests: XCTestCase {
 		XCTAssertNil(sut.currentState.error)
 	}
 	
-	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_실패한_경우_현재키워드를_업데이트하고_레포지토리_이름을_이전_응답_데이터를_유지합니다() throws {
+	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_실패한_경우_이전_응답_데이터를_유지하고_에러를_업데이트합니다() throws {
 		// Given
 		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI)
-		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1)) // Mock API 에서 검색 결과 2개 반환하고 있음
+		// API Mock 에서 검색 결과 2개 반환하도록 설정
+		mockAPI.searchResultStub = .just((["TEST1", "TEST2"], 1))
 		sut.action.onNext(.search("TEST"))
 		mockAPI.searchResultStub = .error(GitHubSearchAPIMockError.responseStatus403Error)
 		
