@@ -88,14 +88,14 @@ final class RepositoryWebViewController: UIViewController, View {
 
 extension RepositoryWebViewController: WKNavigationDelegate {
 	func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-		reactor?.action.onNext(.webLoadStart)
+		reactor?.action.onNext(.webViewLoadStart)
 	}
 	
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		reactor?.action.onNext(.webLoadFinish)
+		reactor?.action.onNext(.webViewLoadFinish)
 	}
 	
 	func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
-		reactor?.action.onNext(.webLoadFinish)
+		reactor?.action.onNext(.webViewLoadFinish)
 	}
 }

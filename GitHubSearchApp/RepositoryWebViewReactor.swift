@@ -13,8 +13,8 @@ final class RepositoryWebViewReactor: Reactor {
 	
 	enum Action {
 		case loadView(repositoryName: String)
-		case webLoadStart
-		case webLoadFinish
+		case webViewLoadStart
+		case webViewLoadFinish
 	}
 	
 	enum Mutation {
@@ -34,9 +34,9 @@ final class RepositoryWebViewReactor: Reactor {
 		switch action {
 		case .loadView(repositoryName: let repositoryName):
 			return .just(Mutation.setURL(repositoryName: repositoryName))
-		case .webLoadStart:
+		case .webViewLoadStart:
 			return .just(Mutation.setIsLoading(isLoading: true))
-		case .webLoadFinish:
+		case .webViewLoadFinish:
 			return .just(Mutation.setIsLoading(isLoading: false))
 		}
 	}
