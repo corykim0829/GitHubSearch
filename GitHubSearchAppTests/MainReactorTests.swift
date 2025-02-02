@@ -46,7 +46,7 @@ final class MainReactorTests: XCTestCase {
 		XCTAssertNotNil(sut.currentState.error)
 	}
 	
-	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_성공한_경우_레포지토리_이름을_기존레포지토리이름에_추가하고_에러를_업데이트합니다() throws {
+	func test_fetchNextPage_action이_들어올_때_다음_페이지_조회가_성공한_경우_레포지토리_이름을_기존레포지토리이름에_추가합니다() throws {
 		// Given
 		let mockAPI = GitHubSearchAPIMock()
 		let sut = MainReactor(searchAPI: mockAPI)
